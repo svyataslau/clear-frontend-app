@@ -2,6 +2,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCreatePost } from '../hooks/usePosts';
 import { createPostSchema, type CreatePostFormData } from '../schemas/post';
+import { Card, Typography, Button } from '@clear/ui';
 
 export function CreatePostForm() {
   const {
@@ -25,100 +26,83 @@ export function CreatePostForm() {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="bg-white rounded-lg shadow-md p-6 mb-6"
-    >
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">Create New Post</h2>
+    <Card variant="default" padding="lg">
+      <Typography variant="h2" weight="bold" style={{ marginBottom: '1.5rem' }}>
+        Create New Post
+      </Typography>
 
-      <div className="space-y-4">
-        <div>
-          <label
-            htmlFor="title"
-            className="block text-sm font-medium text-gray-700 mb-1"
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div>
+            <label className="form-field-label">
+              Title *
+            </label>
+            <input
+              {...register('title')}
+              type="text"
+              placeholder="Enter post title"
+              className={`input-base input-size-md ${errors.title ? 'input-shadow-error' : 'input-shadow-default'}`}
+            />
+            {errors.title && (
+              <p className="form-field-error">{errors.title.message}</p>
+            )}
+          </div>
+
+          <div>
+            <label className="form-field-label">
+              Author *
+            </label>
+            <input
+              {...register('author')}
+              type="text"
+              placeholder="Enter author name"
+              className={`input-base input-size-md ${errors.author ? 'input-shadow-error' : 'input-shadow-default'}`}
+            />
+            {errors.author && (
+              <p className="form-field-error">{errors.author.message}</p>
+            )}
+          </div>
+
+          <div>
+            <label className="form-field-label">
+              Content *
+            </label>
+            <textarea
+              {...register('content')}
+              placeholder="Enter post content"
+              rows={4}
+              className={`w-full rounded-xl bg-neumorphism-background text-gray-700 placeholder-gray-500 transition-all duration-200 focus:outline-none shadow-neumorphism-input ${errors.content ? 'shadow-[inset_6px_6px_4px_#ffebee,inset_-6px_-6px_4px_#ffffff]' : ''}`}
+            />
+            {errors.content && (
+              <p className="form-field-error">{errors.content.message}</p>
+            )}
+          </div>
+
+          <Button
+            type="submit"
+            variant="primary"
+            size="lg"
+            disabled={isSubmitting || createPostMutation.isPending}
+            style={{ width: '100%' }}
           >
-            Title
-          </label>
-          <input
-            {...register('title')}
-            type="text"
-            id="title"
-            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-              errors.title ? 'border-red-500' : 'border-gray-300'
-            }`}
-            placeholder="Enter post title"
-          />
-          {errors.title && (
-            <p className="mt-1 text-sm text-red-600">{errors.title.message}</p>
-          )}
+            {isSubmitting || createPostMutation.isPending
+              ? 'Creating...'
+              : 'Create Post'}
+          </Button>
         </div>
 
-        <div>
-          <label
-            htmlFor="author"
-            className="block text-sm font-medium text-gray-700 mb-1"
-          >
-            Author
-          </label>
-          <input
-            {...register('author')}
-            type="text"
-            id="author"
-            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-              errors.author ? 'border-red-500' : 'border-gray-300'
-            }`}
-            placeholder="Enter author name"
-          />
-          {errors.author && (
-            <p className="mt-1 text-sm text-red-600">{errors.author.message}</p>
-          )}
-        </div>
+        {createPostMutation.isError && (
+          <Typography color="gray" style={{ marginTop: '1rem', color: '#dc2626' }}>
+            Error creating post. Please try again.
+          </Typography>
+        )}
 
-        <div>
-          <label
-            htmlFor="content"
-            className="block text-sm font-medium text-gray-700 mb-1"
-          >
-            Content
-          </label>
-          <textarea
-            {...register('content')}
-            id="content"
-            rows={4}
-            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-              errors.content ? 'border-red-500' : 'border-gray-300'
-            }`}
-            placeholder="Enter post content"
-          />
-          {errors.content && (
-            <p className="mt-1 text-sm text-red-600">
-              {errors.content.message}
-            </p>
-          )}
-        </div>
-
-        <button
-          type="submit"
-          disabled={isSubmitting || createPostMutation.isPending}
-          className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        >
-          {isSubmitting || createPostMutation.isPending
-            ? 'Creating...'
-            : 'Create Post'}
-        </button>
-      </div>
-
-      {createPostMutation.isError && (
-        <p className="mt-4 text-sm text-red-600">
-          Error creating post. Please try again.
-        </p>
-      )}
-
-      {createPostMutation.isSuccess && (
-        <p className="mt-4 text-sm text-green-600">
-          Post created successfully!
-        </p>
-      )}
-    </form>
+        {createPostMutation.isSuccess && (
+          <Typography color="gray" style={{ marginTop: '1rem', color: '#22c55e' }}>
+            Post created successfully!
+          </Typography>
+        )}
+      </form>
+    </Card>
   );
 }

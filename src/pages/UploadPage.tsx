@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { FileUpload } from '../components/FileUpload';
+import { Typography, Card } from '@clear/ui';
 
 export function UploadPage() {
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
@@ -13,29 +14,30 @@ export function UploadPage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <header className="mb-8">
-        <h1 className="text-4xl font-bold text-gray-900 mb-2">File Upload</h1>
-        <p className="text-lg text-gray-600">Upload and manage your files</p>
+    <div className="main-content">
+      <header className="page-header">
+        <Typography variant="h1" weight="bold" className="page-title">
+          File Upload
+        </Typography>
+        <Typography variant="body" color="gray" className="page-description">
+          Upload and manage your files
+        </Typography>
       </header>
 
-      <div className="space-y-8">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
         <FileUpload onFileSelect={handleFileSelect} />
 
         {uploadedFiles.length > 0 && (
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
+          <Card variant="default" padding="lg">
+            <Typography variant="h2" weight="bold" style={{ marginBottom: '1rem' }}>
               Uploaded Files
-            </h2>
-            <div className="space-y-3">
+            </Typography>
+            <div className="file-list">
               {uploadedFiles.map((file, index) => (
-                <div
-                  key={`${file.name}-${index}`}
-                  className="flex items-center justify-between bg-gray-50 rounded-lg p-4"
-                >
-                  <div className="flex items-center space-x-3">
+                <div key={`${file.name}-${index}`} className="file-item">
+                  <div className="file-info">
                     <svg
-                      className="w-8 h-8 text-blue-500"
+                      style={{ width: '2rem', height: '2rem', color: '#3b82f6' }}
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -50,20 +52,22 @@ export function UploadPage() {
                         d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                       />
                     </svg>
-                    <div>
-                      <p className="font-medium text-gray-900">{file.name}</p>
-                      <p className="text-sm text-gray-500">
+                    <div className="file-details">
+                      <Typography variant="body" weight="medium" className="file-name">
+                        {file.name}
+                      </Typography>
+                      <Typography variant="caption" color="gray" className="file-size">
                         {(file.size / 1024 / 1024).toFixed(2)} MB
-                      </p>
+                      </Typography>
                     </div>
                   </div>
                   <button
                     type="button"
                     onClick={() => removeFile(index)}
-                    className="text-red-600 hover:text-red-800 transition-colors"
+                    className="delete-button"
                   >
                     <svg
-                      className="w-5 h-5"
+                      style={{ width: '1.25rem', height: '1.25rem' }}
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -82,7 +86,7 @@ export function UploadPage() {
                 </div>
               ))}
             </div>
-          </div>
+          </Card>
         )}
       </div>
     </div>

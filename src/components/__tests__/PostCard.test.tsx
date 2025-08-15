@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { PostCard } from '../PostCard';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { Post } from '../../types';
 
 const mockPost: Post = {

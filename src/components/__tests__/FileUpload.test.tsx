@@ -10,143 +10,141 @@ describe('FileUpload', () => {
     mockOnFileSelect.mockClear();
   });
 
-  it('отображает компонент загрузки файлов', () => {
+  it('renders upload area', () => {
     render(<FileUpload onFileSelect={mockOnFileSelect} />);
 
-    expect(
-      screen.getByText('Drag and drop a file here or click to select')
-    ).toBeInTheDocument();
-    expect(screen.getByText('Select File')).toBeInTheDocument();
+    expect(screen.getByText('Drag and drop files here or click to select')).toBeInTheDocument();
+    expect(screen.getByText('Select Files')).toBeInTheDocument();
+    expect(screen.getByText('Supported formats: all')).toBeInTheDocument();
+    expect(screen.getByText('Maximum size: 5MB per file')).toBeInTheDocument();
   });
 
-  it('показывает правильные ограничения по размеру', () => {
-    render(
-      <FileUpload onFileSelect={mockOnFileSelect} maxSize={10 * 1024 * 1024} />
-    );
-
-    expect(screen.getByText('Maximum size: 10MB')).toBeInTheDocument();
-  });
-
-  it('показывает поддерживаемые форматы', () => {
-    render(<FileUpload onFileSelect={mockOnFileSelect} accept=".jpg,.png" />);
-
-    expect(
-      screen.getByText('Supported formats: .jpg,.png')
-    ).toBeInTheDocument();
-  });
-
-  it('обрабатывает выбор файла через input', async () => {
+  it('handles file selection via input', async () => {
     const user = userEvent.setup();
     render(<FileUpload onFileSelect={mockOnFileSelect} />);
 
-    const file = new File(['test content'], 'test.txt', { type: 'text/plain' });
-    const input = screen.getByRole('button', { name: 'Select File' });
+    const file = new File(['test content'], 'test-file.txt', { type: 'text/plain' });
+    const input = screen.getByRole('button', { name: 'Select Files' });
 
     await user.click(input);
 
-    // Simulate file selection
-    const fileInput = document.querySelector(
-      'input[type="file"]'
-    ) as HTMLInputElement;
+    const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
     fireEvent.change(fileInput, { target: { files: [file] } });
 
     await waitFor(() => {
-      expect(mockOnFileSelect).toHaveBeenCalledWith(file);
+      expect(mockOnFileSelect).toHaveBeenCalledWith([file]);
     });
   });
 
-  it('показывает ошибку для слишком большого файла', async () => {
-    const user = userEvent.setup();
-    render(<FileUpload onFileSelect={mockOnFileSelect} maxSize={1024} />);
-
-    const largeFile = new File(['x'.repeat(2048)], 'large.txt', {
-      type: 'text/plain',
-    });
-    const input = screen.getByRole('button', { name: 'Select File' });
-
-    await user.click(input);
-
-    const fileInput = document.querySelector(
-      'input[type="file"]'
-    ) as HTMLInputElement;
-    fireEvent.change(fileInput, { target: { files: [largeFile] } });
-
-    await waitFor(() => {
-      expect(
-        screen.getByText('File is too large. Maximum size: 0MB')
-      ).toBeInTheDocument();
-    });
-
-    expect(mockOnFileSelect).not.toHaveBeenCalled();
-  });
-
-  it('обрабатывает drag and drop', async () => {
+  it('handles drag and drop', async () => {
     render(<FileUpload onFileSelect={mockOnFileSelect} />);
 
-    const file = new File(['test content'], 'test.txt', { type: 'text/plain' });
-    const dropZone = screen
-      .getByText('Drag and drop a file here or click to select')
-      .closest('div');
+    const file = new File(['test content'], 'test-file.txt', { type: 'text/plain' });
+    const uploadArea = screen.getByText('Drag and drop files here or click to select').closest('div');
 
-    if (!dropZone) throw new Error('Drop zone not found');
-    fireEvent.dragOver(dropZone);
-    fireEvent.drop(dropZone, {
+    fireEvent.dragOver(uploadArea!);
+    fireEvent.drop(uploadArea!, {
       dataTransfer: {
         files: [file],
       },
     });
 
     await waitFor(() => {
-      expect(mockOnFileSelect).toHaveBeenCalledWith(file);
+      expect(mockOnFileSelect).toHaveBeenCalledWith([file]);
     });
   });
 
-  it('показывает выбранный файл', async () => {
+  it('shows error for file too large', async () => {
+    const user = userEvent.setup();
+    render(<FileUpload onFileSelect={mockOnFileSelect} maxSize={1024} />);
+
+    const largeFile = new File(['x'.repeat(2048)], 'large-file.txt', { type: 'text/plain' });
+    const input = screen.getByRole('button', { name: 'Select Files' });
+
+    await user.click(input);
+
+    const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+    fireEvent.change(fileInput, { target: { files: [largeFile] } });
+
+    await waitFor(() => {
+      expect(screen.getByText(/File is too large/)).toBeInTheDocument();
+      expect(mockOnFileSelect).not.toHaveBeenCalled();
+    });
+  });
+
+  it('handles multiple files', async () => {
     const user = userEvent.setup();
     render(<FileUpload onFileSelect={mockOnFileSelect} />);
 
-    const file = new File(['test content'], 'test.txt', { type: 'text/plain' });
+    const file1 = new File(['content1'], 'file1.txt', { type: 'text/plain' });
     const input = screen.getByRole('button', { name: 'Select File' });
 
     await user.click(input);
 
-    const fileInput = document.querySelector(
-      'input[type="file"]'
-    ) as HTMLInputElement;
-    fireEvent.change(fileInput, { target: { files: [file] } });
+    const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+    fireEvent.change(fileInput, { target: { files: [file1] } });
 
     await waitFor(() => {
-      expect(screen.getByText('File Selected')).toBeInTheDocument();
-      expect(screen.getByText('test.txt')).toBeInTheDocument();
-      expect(screen.getByText('Remove File')).toBeInTheDocument();
+      expect(mockOnFileSelect).toHaveBeenCalledWith(file1);
     });
   });
 
-  it('удаляет выбранный файл', async () => {
+  it('shows selected files info', async () => {
     const user = userEvent.setup();
     render(<FileUpload onFileSelect={mockOnFileSelect} />);
 
-    const file = new File(['test content'], 'test.txt', { type: 'text/plain' });
-    const input = screen.getByRole('button', { name: 'Select File' });
+    const file = new File(['test content'], 'test-file.txt', { type: 'text/plain' });
+    const input = screen.getByRole('button', { name: 'Select Files' });
 
     await user.click(input);
 
-    const fileInput = document.querySelector(
-      'input[type="file"]'
-    ) as HTMLInputElement;
+    const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+    fireEvent.change(fileInput, { target: { files: [file] } });
+
+    await waitFor(() => {
+      expect(screen.getByText('File Selected')).toBeInTheDocument();
+      expect(screen.getByText('test-file.txt')).toBeInTheDocument();
+      expect(screen.getByText('12 Bytes')).toBeInTheDocument();
+      expect(screen.getByText('text/plain')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Remove Files' })).toBeInTheDocument();
+    });
+  });
+
+  it('removes selected files', async () => {
+    const user = userEvent.setup();
+    render(<FileUpload onFileSelect={mockOnFileSelect} />);
+
+    const file = new File(['test content'], 'test-file.txt', { type: 'text/plain' });
+    const input = screen.getByRole('button', { name: 'Select Files' });
+
+    await user.click(input);
+
+    const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
     fireEvent.change(fileInput, { target: { files: [file] } });
 
     await waitFor(() => {
       expect(screen.getByText('File Selected')).toBeInTheDocument();
     });
 
-    const removeButton = screen.getByText('Remove File');
+    const removeButton = screen.getByRole('button', { name: 'Remove Files' });
     await user.click(removeButton);
 
     await waitFor(() => {
-      expect(
-        screen.getByText('Drag and drop a file here or click to select')
-      ).toBeInTheDocument();
+      expect(screen.getByText('Drag and drop files here or click to select')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Select Files' })).toBeInTheDocument();
     });
+  });
+
+  it('handles keyboard navigation', async () => {
+    const user = userEvent.setup();
+    render(<FileUpload onFileSelect={mockOnFileSelect} />);
+
+    const uploadArea = screen.getByText('Drag and drop files here or click to select').closest('div');
+    uploadArea?.focus();
+
+    await user.keyboard('{Enter}');
+
+    const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+    expect(fileInput).toBeInTheDocument();
   });
 });

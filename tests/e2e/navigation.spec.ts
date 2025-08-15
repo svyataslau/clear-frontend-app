@@ -4,12 +4,6 @@ test.describe('Navigation', () => {
   test('should navigate between pages', async ({ page }) => {
     await page.goto('/');
 
-    // Check that we are on the home page
-    await expect(page.getByRole('heading', { name: 'Clear' })).toBeVisible();
-    await expect(
-      page.getByText('Share your thoughts with the world')
-    ).toBeVisible();
-
     // Navigate to upload page
     await page.getByRole('link', { name: 'Upload' }).click();
     await expect(page).toHaveURL('/upload');

@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback } from 'react';
+import { Card, Button, Typography } from '@clear/ui';
 
 interface FileUploadProps {
   onFileSelect?: (file: File) => void;
@@ -95,18 +96,11 @@ export function FileUpload({
   };
 
   return (
-    <div className="w-full">
-      {/* biome-ignore lint/a11y/useSemanticElements: Need div with role due to nested buttons */}
+    <div style={{ width: '100%' }}>
       <div
         role="button"
         tabIndex={0}
-        className={`w-full border-2 border-dashed rounded-lg p-8 text-center transition-colors cursor-pointer ${
-          isDragOver
-            ? 'border-blue-500 bg-blue-50'
-            : selectedFile
-              ? 'border-green-500 bg-green-50'
-              : 'border-gray-300 bg-gray-50 hover:border-gray-400'
-        }`}
+        className={`upload-area ${isDragOver ? 'drag-over' : selectedFile ? 'file-selected' : ''}`}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
@@ -123,13 +117,13 @@ export function FileUpload({
           type="file"
           accept={accept}
           onChange={handleFileInputChange}
-          className="hidden"
+          style={{ display: 'none' }}
         />
 
         {!selectedFile ? (
           <div>
             <svg
-              className="mx-auto h-12 w-12 text-gray-400 mb-4"
+              style={{ width: '3rem', height: '3rem', margin: '0 auto 1rem', color: '#9ca3af' }}
               stroke="currentColor"
               fill="none"
               viewBox="0 0 48 48"
@@ -144,27 +138,23 @@ export function FileUpload({
                 strokeLinejoin="round"
               />
             </svg>
-            <p className="text-lg font-medium text-gray-900 mb-2">
+            <Typography variant="h4" weight="medium" style={{ marginBottom: '0.5rem' }}>
               Drag and drop a file here or click to select
-            </p>
-            <p className="text-sm text-gray-500 mb-4">
+            </Typography>
+            <Typography variant="body" color="gray" style={{ marginBottom: '1rem' }}>
               Supported formats: {accept === '*' ? 'all' : accept}
-            </p>
-            <p className="text-sm text-gray-500">
+            </Typography>
+            <Typography variant="body" color="gray" style={{ marginBottom: '1rem' }}>
               Maximum size: {Math.round(maxSize / 1024 / 1024)}MB
-            </p>
-            <button
-              type="button"
-              onClick={handleClick}
-              className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
-            >
+            </Typography>
+            <Button variant="primary" size="md" onClick={handleClick}>
               Select File
-            </button>
+            </Button>
           </div>
         ) : (
           <div>
             <svg
-              className="mx-auto h-12 w-12 text-green-500 mb-4"
+              style={{ width: '3rem', height: '3rem', margin: '0 auto 1rem', color: '#22c55e' }}
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -179,37 +169,35 @@ export function FileUpload({
                 d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
               />
             </svg>
-            <p className="text-lg font-medium text-gray-900 mb-2">
+            <Typography variant="h4" weight="medium" style={{ marginBottom: '0.5rem' }}>
               File Selected
-            </p>
-            <div className="bg-white rounded-lg p-4 mb-4">
-              <p className="text-sm text-gray-600">
-                <span className="font-medium">Name:</span> {selectedFile.name}
-              </p>
-              <p className="text-sm text-gray-600">
-                <span className="font-medium">Size:</span>{' '}
+            </Typography>
+            <Card variant="default" padding="md" style={{ marginBottom: '1rem' }}>
+              <Typography variant="body" color="gray">
+                <span style={{ fontWeight: '500' }}>Name:</span> {selectedFile.name}
+              </Typography>
+              <Typography variant="body" color="gray">
+                <span style={{ fontWeight: '500' }}>Size:</span>{' '}
                 {formatFileSize(selectedFile.size)}
-              </p>
-              <p className="text-sm text-gray-600">
-                <span className="font-medium">Type:</span>{' '}
+              </Typography>
+              <Typography variant="body" color="gray">
+                <span style={{ fontWeight: '500' }}>Type:</span>{' '}
                 {selectedFile.type || 'Unknown'}
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={removeFile}
-              className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors"
-            >
+              </Typography>
+            </Card>
+            <Button variant="primary" size="md" onClick={removeFile}>
               Remove File
-            </button>
+            </Button>
           </div>
         )}
       </div>
 
       {error && (
-        <div className="mt-4 bg-red-50 border border-red-200 rounded-lg p-4">
-          <p className="text-sm text-red-600">{error}</p>
-        </div>
+        <Card variant="default" padding="md" style={{ marginTop: '1rem', backgroundColor: '#fef2f2', border: '1px solid #fecaca' }}>
+          <Typography variant="body" style={{ color: '#dc2626' }}>
+            {error}
+          </Typography>
+        </Card>
       )}
     </div>
   );

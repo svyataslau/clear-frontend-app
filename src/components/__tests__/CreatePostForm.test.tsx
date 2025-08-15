@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { CreatePostForm } from '../CreatePostForm';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const renderWithQueryClient = (component: React.ReactElement) => {
   const queryClient = new QueryClient({

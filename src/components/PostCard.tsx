@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useToggleLike } from '../hooks/usePosts';
 import type { Post } from '../types';
+import { Card, Typography, Button } from '@clear/ui';
 
 interface PostCardProps {
   post: Post;
@@ -33,41 +34,39 @@ export function PostCard({ post }: PostCardProps) {
   };
 
   return (
-    <article
-      data-testid="post-card"
-      className="bg-white rounded-lg shadow-md p-6 mb-4 hover:shadow-lg transition-shadow"
-    >
-      <header className="mb-4">
-        <h2 className="text-xl font-semibold text-gray-900 mb-2">
+    <Card variant="default" padding="lg" style={{ marginBottom: '1rem' }}>
+      <div style={{ marginBottom: '1rem' }}>
+        <Typography variant="h3" weight="bold" style={{ marginBottom: '0.5rem' }}>
           {post.title}
-        </h2>
-        <div className="flex items-center justify-between text-sm text-gray-600">
+        </Typography>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.875rem', color: '#666' }}>
           <span>Author: {post.author}</span>
           <time dateTime={post.createdAt}>{formatDate(post.createdAt)}</time>
         </div>
-      </header>
-
-      <div className="mb-4">
-        <p className="text-gray-700 leading-relaxed">{post.content}</p>
       </div>
 
-      <footer className="flex items-center justify-between">
-        <button
-          type="button"
+      <div style={{ marginBottom: '1rem' }}>
+        <Typography variant="body" style={{ lineHeight: '1.6' }}>
+          {post.content}
+        </Typography>
+      </div>
+
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Button
+          variant={optimisticIsLiked ? "primary" : "ghost"}
+          size="md"
           onClick={handleLikeClick}
           disabled={toggleLikeMutation.isPending}
-          className={`flex items-center space-x-2 px-4 py-2 rounded-full transition-colors ${
-            optimisticIsLiked
-              ? 'bg-red-100 text-red-600 hover:bg-red-200'
-              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-          }`}
+          style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
         >
           <svg
-            className={`w-5 h-5 ${optimisticIsLiked ? 'fill-current' : 'stroke-current fill-none'}`}
+            style={{ width: '1.25rem', height: '1.25rem' }}
             viewBox="0 0 24 24"
             strokeWidth="2"
             role="img"
             aria-label="Like icon"
+            fill={optimisticIsLiked ? 'currentColor' : 'none'}
+            stroke="currentColor"
           >
             <title>Like icon</title>
             <path
@@ -77,12 +76,14 @@ export function PostCard({ post }: PostCardProps) {
             />
           </svg>
           <span>{optimisticLikes}</span>
-        </button>
+        </Button>
 
         {toggleLikeMutation.isPending && (
-          <span className="text-sm text-gray-500">Updating...</span>
+          <Typography variant="caption" color="gray">
+            Updating...
+          </Typography>
         )}
-      </footer>
-    </article>
+      </div>
+    </Card>
   );
 }
