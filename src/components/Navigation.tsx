@@ -9,7 +9,7 @@ export function Navigation() {
 
   const links = [
     { href: '/', label: 'Feed', active: isActive('/') },
-    { href: '/upload', label: 'Upload', active: isActive('/upload') },
+    { href: '/upload', label: 'Create Post', active: isActive('/upload') },
   ];
 
   return (
