@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { FileUpload } from '../components/FileUpload';
 import { CreatePostForm } from '../components/CreatePostForm';
 import { Typography, Card } from '@clear/ui';
 
@@ -31,8 +30,6 @@ export function UploadPage() {
         </div>
 
         <div className="sticky-sidebar">
-          <FileUpload onFileSelect={handleFileSelect} />
-
           {uploadedFiles.length > 0 && (
             <Card variant="default" padding="lg" style={{ marginTop: '2rem' }}>
               <Typography variant="h2" weight="bold" style={{ marginBottom: '1rem' }}>

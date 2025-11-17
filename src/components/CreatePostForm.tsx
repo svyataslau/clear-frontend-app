@@ -2,7 +2,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCreatePost } from '../hooks/usePosts';
 import { createPostSchema, type CreatePostFormData } from '../schemas/post';
-import { Card, Typography, Button } from '@clear/ui';
+import {Card, Typography, Button, Textarea, Input} from '@clear/ui';
 
 export function CreatePostForm() {
   const {
@@ -37,45 +37,20 @@ export function CreatePostForm() {
             <label className="form-field-label">
               Title *
             </label>
-            <input
-              {...register('title')}
-              type="text"
-              placeholder="Enter post title"
-              className={`input-base input-size-md ${errors.title ? 'input-shadow-error' : 'input-shadow-default'}`}
-            />
-            {errors.title && (
-              <p className="form-field-error">{errors.title.message}</p>
-            )}
+            <Input placeholder="Enter title" />
           </div>
-
           <div>
             <label className="form-field-label">
               Author *
             </label>
-            <input
-              {...register('author')}
-              type="text"
-              placeholder="Enter author name"
-              className={`input-base input-size-md ${errors.author ? 'input-shadow-error' : 'input-shadow-default'}`}
-            />
-            {errors.author && (
-              <p className="form-field-error">{errors.author.message}</p>
-            )}
+            <Input placeholder="Enter author name" />
           </div>
 
           <div>
             <label className="form-field-label">
               Content *
             </label>
-            <textarea
-              {...register('content')}
-              placeholder="Enter post content"
-              rows={4}
-              className={`w-full rounded-xl bg-neumorphism-background text-gray-700 placeholder-gray-500 transition-all duration-200 focus:outline-none shadow-neumorphism-input ${errors.content ? 'shadow-[inset_6px_6px_4px_#ffebee,inset_-6px_-6px_4px_#ffffff]' : ''}`}
-            />
-            {errors.content && (
-              <p className="form-field-error">{errors.content.message}</p>
-            )}
+            <Textarea placeholder={"Enter post content"} />
           </div>
 
           <Button
@@ -83,7 +58,6 @@ export function CreatePostForm() {
             variant="primary"
             size="lg"
             disabled={isSubmitting || createPostMutation.isPending}
-            style={{ width: '100%' }}
           >
             {isSubmitting || createPostMutation.isPending
               ? 'Creating...'
