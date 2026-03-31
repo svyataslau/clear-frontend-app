@@ -6,10 +6,9 @@ import {Card, Typography, Button, Textarea, Input} from '@clear/ui';
 
 export function CreatePostForm() {
   const {
-    register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting },
+    formState: { isSubmitting },
   } = useForm<CreatePostFormData>({
     resolver: zodResolver(createPostSchema),
   });

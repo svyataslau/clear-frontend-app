@@ -5,10 +5,6 @@ import { Typography, Card } from '@clear/ui';
 export function UploadPage() {
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
 
-  const handleFileSelect = (file: File) => {
-    setUploadedFiles((prev) => [...prev, file]);
-  };
-
   const removeFile = (index: number) => {
     setUploadedFiles((prev) => prev.filter((_, i) => i !== index));
   };
